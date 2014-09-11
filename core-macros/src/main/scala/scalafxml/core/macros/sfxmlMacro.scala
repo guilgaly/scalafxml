@@ -55,17 +55,26 @@ object sfxmlMacro {
       // We simply replace the package to javafx from scalafx,
       // and keep everything else
       if (pkg.isPackageClass) {
-	val pkgName = pkg.fullName
-	if (pkgName.startsWith("scalafx.")) {
-	        
-	  val args = scalaFxType.asInstanceOf[TypeRefApi].args
+        val pkgName = pkg.fullName
+        if (pkgName.startsWith("scalafx.")) {
 
-	  val jfxPkgName = pkgName.replaceFirst("scalafx.", "javafx.")
-	  val jfxClassName = s"$jfxPkgName.$name"
-	  val jfxClass = c.mirror.staticClass(jfxClassName)
-	        
-	  return Some(tq"$jfxClass[..$args]")
-	}
+          val args = scalaFxType.asInstanceOf[TypeRefApi].args
+
+          val jfxPkgName = pkgName.replaceFirst("scalafx.", "javafx.")
+          val jfxClassName = s"$jfxPkgName.$name"
+          val jfxClass = c.mirror.staticClass(jfxClassName)
+
+          return Some(tq"$jfxClass[..$args]")
+        } else if (pkgName.startsWith("customscalafx.")) {
+
+          val args = scalaFxType.asInstanceOf[TypeRefApi].args
+
+          val jfxPkgName = pkgName.replaceFirst("customscalafx.", "customjavafx.")
+          val jfxClassName = s"$jfxPkgName.$name"
+          val jfxClass = c.mirror.staticClass(jfxClassName)
+
+          return Some(tq"$jfxClass[..$args]")
+        }
       }
 	     
       return None // default: no conversion
